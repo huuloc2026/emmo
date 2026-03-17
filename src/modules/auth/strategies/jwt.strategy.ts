@@ -15,7 +15,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     private tokenService: TokenService,
     private userService: UserService,
   ) {
-    const secret = configService.get<string>('jwt.secret');
+    // const secret = configService.get<string>('jwt.secret');
+    const secret = configService.get<string>('JWT_SECRET');
     if (!secret) {
       throw new Error('JWT Secret not found in configuration');
     }

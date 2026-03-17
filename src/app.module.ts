@@ -11,7 +11,9 @@ import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from './modules/auth/guards/roles.guard';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
-import { UserModule } from './modules/auth/auth.module';
+import { UserModule } from './modules/user/user.module';
+import { AuthModule } from './modules/auth/auth.module';
+
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true, load: [redisConfig], }), LoggerModule.forRoot({
     pinoHttp: {
@@ -31,7 +33,7 @@ import { UserModule } from './modules/auth/auth.module';
       },
     ]),
   }),
-    PrismaModule, RedisModule, UserModule],
+    PrismaModule, RedisModule, AuthModule, UserModule],
   controllers: [AppController],
   providers: [AppService,// Global guards
     {

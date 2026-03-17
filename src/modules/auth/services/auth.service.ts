@@ -66,9 +66,9 @@ export class AuthService {
     }
 
     // Check if user is active
-    if (user.status !== 'ACTIVE') {
-      throw new UnauthorizedException('Account is not active');
-    }
+    // if (user.status !== 'ACTIVE') {
+    //   throw new UnauthorizedException('Account is not active');
+    // }
 
     // Validate password
     const isValidPassword = await this.userService.validatePassword(user, loginDto.password);
@@ -78,7 +78,7 @@ export class AuthService {
     }
 
     // Clear failed attempts
-    await this.clearLoginAttempts(loginDto.email);
+    // await this.clearLoginAttempts(loginDto.email);
 
     // Update last login
     await this.userService.updateLastLogin(user.id, ipAddress);

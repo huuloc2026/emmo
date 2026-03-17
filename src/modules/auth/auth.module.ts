@@ -1,18 +1,33 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthController } from './controllers/auth.controller';
+import { AuthService } from './services/auth.service';
+import { GoogleStrategy } from './strategies/google.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { UserModule } from '../user/user.module';
+import { RedisService } from '@/shared/redis/redis.service';
+import { TokenService } from './services/token.service';
 
-import { PrismaModule } from '../../shared/prisma/prisma.module';
-import { RedisModule } from '../../shared/redis/redis.module';
-import { UserController } from '../user/controllers/user.controller';
-import { UserService } from '../user/services/user.service';
-import { UserRepository } from '../user/repositories/user.repository';
 
 @Module({
   imports: [
-    
-    RedisModule,
+    UserModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get('JWT_SECRET'),
+        signOptions: {
+          expiresIn: configService.get('JWT_EXPIRES_IN', '7d'),
+        },
+      }),
+      inject: [ConfigService],
+    }),
   ],
-  controllers: [UserController],
-  providers: [UserService, UserRepository],
-  exports: [UserService, UserRepository],
+  controllers: [AuthController],
+  providers: [AuthService, GoogleStrategy, JwtStrategy, TokenService,RedisService],
+  exports: [AuthService],
 })
-export class UserModule {}
+export class AuthModule {}
