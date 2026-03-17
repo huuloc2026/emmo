@@ -1,13 +1,14 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { UserService } from './services/user.service';
-import { UserController } from './controllers/user.controller';
-import { UserRepository } from './repositories/user.repository';
+
 import { PrismaModule } from '../../shared/prisma/prisma.module';
 import { RedisModule } from '../../shared/redis/redis.module';
+import { UserController } from '../user/controllers/user.controller';
+import { UserService } from '../user/services/user.service';
+import { UserRepository } from '../user/repositories/user.repository';
 
 @Module({
   imports: [
-    PrismaModule,
+    
     RedisModule,
   ],
   controllers: [UserController],

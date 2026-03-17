@@ -13,13 +13,14 @@ import {
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { CreateUserSchema, UpdateUserSchema, UserFilterSchema, UserIdSchema } from '../dto/user.zod';
-import { ZodValidationPipe } from '../../../common/pipes/zod-validation.pipe';
+
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { UserRole } from '../../../generated/prisma';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
 
 @ApiTags('users')
 @Controller('users')

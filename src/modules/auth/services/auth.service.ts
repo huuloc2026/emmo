@@ -8,6 +8,7 @@ import { PrismaService } from '../../../shared/prisma/prisma.service';
 import { RegisterDto, LoginDto, ForgotPasswordDto, ResetPasswordDto, ChangePasswordDto } from '../dto/auth.zod';
 import { UserEntity } from '../../user/entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { AuthProvider } from '@/generated/prisma';
 
 @Injectable()
 export class AuthService {
@@ -33,6 +34,7 @@ export class AuthService {
     // Create user
     const user = await this.userService.create({
       ...registerDto,
+      provider: AuthProvider.LOCAL,
       emailVerified: false,
     });
 

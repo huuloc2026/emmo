@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ConflictException, Logger } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { User } from '../../../generated/prisma'; // Fix import
+import { User } from '../../../generated/prisma'; 
 import { UserRepository } from '../repositories/user.repository';
 import { UserEntity } from '../entities/user.entity';
 import { CreateUserDto, UpdateUserDto, UserFilterDto } from '../dto/user.zod';
