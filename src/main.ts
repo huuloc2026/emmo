@@ -31,20 +31,24 @@ async function bootstrap() {
 
 
   // Security
-  await app.register(helmet, {
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: [`'self'`],
-        styleSrc: [`'self'`, `'unsafe-inline'`],
-        imgSrc: [`'self'`, 'data:', 'validator.swagger.io'],
-        scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
-      },
-    },
-  });
+// await app.register(helmet, {
+//     contentSecurityPolicy: {
+//       directives: {
+//         defaultSrc: [`'self'`],
+//         styleSrc: [`'self'`, `'unsafe-inline'`],
+//         imgSrc: [`'self'`, 'data:', 'validator.swagger.io'],
+//         scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+//         // Cần thiết cho Swagger trên Fastify
+//         connectSrc: [`'self'`, `https:`, `http:`],
+//       },
+//     },
+//   });
 
   // CORS
   await app.register(fastifyCors, {
-    origin: configService.get<string[]>('app.corsOrigin'),
+    origin: configService.get('NODE_ENV') === 'production' 
+  ? configService.get<string[]>('app.corsOrigin') 
+  : true,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
@@ -66,7 +70,7 @@ async function bootstrap() {
     threshold: 1024, // Compress responses larger than 1KB
   });
 
-  // Global prefixes
+
   // Global prefixes
   const apiPrefix = configService.get<string>('app.apiPrefix') ?? 'api';
   app.setGlobalPrefix(apiPrefix, {
