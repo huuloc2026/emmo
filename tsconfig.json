@@ -16,6 +16,24 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
-  }
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "@modules/*": [
+        "src/modules/*"
+      ],
+      "@common/*": [
+        "src/common/*"
+      ],
+      "@shared/*": [
+        "src/shared/*"
+      ],
+      
+      
+    }
+  },
+    "include": ["src/**/*", "test/**/*", "prisma/**/*", "src/generated", "prisma"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -1,0 +1,128 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider     = "prisma-client-js"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  PENDING_VERIFICATION
+}
+
+enum AuthProvider {
+  LOCAL
+  GOOGLE
+  FACEBOOK
+  GITHUB
+}
+
+model User {
+  id         String       @id @default(cuid())
+  email      String       @unique
+  password   String? // Null for OAuth users
+  fullName   String
+  avatar     String?
+  role       UserRole     @default(USER)
+  status     UserStatus   @default(PENDING_VERIFICATION)
+  provider   AuthProvider @default(LOCAL)
+  providerId String? // ID from OAuth provider
+
+  // Security
+  twoFactorEnabled Boolean   @default(false)
+  twoFactorSecret  String?
+  emailVerified    Boolean   @default(false)
+  emailVerifiedAt  DateTime?
+
+  // Sessions & Tokens
+  refreshTokens     RefreshToken[]
+  loginHistory      LoginHistory[]
+  passwordResets    PasswordReset[]
+  emailVerification EmailVerification?
+
+  // Metadata
+  lastLoginAt DateTime?
+  lastLoginIP String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime? // Soft delete
+
+  // Indexes
+  @@index([email])
+  @@index([provider, providerId])
+  @@index([status])
+  @@index([role])
+}
+
+model RefreshToken {
+  id         String    @id @default(cuid())
+  token      String    @unique
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime
+  createdAt  DateTime  @default(now())
+  revokedAt  DateTime?
+  replacedBy String? // Token mới thay thế
+  deviceInfo String?
+  ipAddress  String?
+
+  @@index([token])
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model LoginHistory {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ipAddress     String?
+  userAgent     String?
+  deviceInfo    String?
+  location      String?
+  success       Boolean  @default(true)
+  failureReason String?
+  createdAt     DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model PasswordReset {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([token])
+  @@index([expiresAt])
+}
+
+model EmailVerification {
+  id        String    @id @default(cuid())
+  userId    String    @unique
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([token])
+  @@index([expiresAt])
+}
